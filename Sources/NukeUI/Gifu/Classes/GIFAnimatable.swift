@@ -70,7 +70,7 @@ extension GIFAnimatable {
   /// - parameter imageData: GIF image data.
   /// - parameter loopCount: Desired number of loops, <= 0 for infinite loop.
   /// - parameter completionHandler: Completion callback function
-  func animate(withGIFData imageData: Data, loopCount: Int = 0, preparationBlock: (() -> Void)? = nil, animationBlock: (() -> Void)? = nil) {
+  public func animate(withGIFData imageData: Data, loopCount: Int = 0, preparationBlock: (() -> Void)? = nil, animationBlock: (() -> Void)? = nil) {
     animator?.animate(withGIFData: imageData,
                       size: frame.size,
                       contentMode: contentMode,

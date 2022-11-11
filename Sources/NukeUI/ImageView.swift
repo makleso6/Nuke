@@ -40,7 +40,11 @@ public class ImageView: _PlatformBaseView {
 
 #if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
     /// Returns an underlying animated image view used for rendering animated images.
-    public var animatedImageView: AnimatedImageView {
+    public var animatedImageView: UIImageView {
+        return imageViewAnimating
+    }
+    
+    private var imageViewAnimating: ImageViewAnimating {
         if let view = _animatedImageView {
             return view
         }
@@ -50,13 +54,22 @@ public class ImageView: _PlatformBaseView {
         return view
     }
 
-    private func makeAnimatedImageView() -> AnimatedImageView {
-        let view = AnimatedImageView()
+    private func makeAnimatedImageView() -> ImageViewAnimating {
+        let view = animatedImageViewProvider.makeAnimatedImageView()
         view.contentMode = .init(resizingMode: resizingMode)
         return view
     }
 
-    private var _animatedImageView: AnimatedImageView?
+    private var _animatedImageView: ImageViewAnimating?
+    
+    public var animatedImageViewProvider: AnimatedImageViewProviding = GifuAnimatedImageViewProvider() {
+        didSet {
+            _animatedImageView?.removeFromSuperview()
+            let view = makeAnimatedImageView()
+            addContentView(view)
+            _animatedImageView = view
+        }
+    }
 #endif
 
     /// Returns an underlying video player view.
@@ -164,7 +177,7 @@ public class ImageView: _PlatformBaseView {
         }
 #if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
         if isAnimatedImageRenderingEnabled, let data = container.data, container.type == .gif {
-            animatedImageView.animate(withGIFData: data)
+            imageViewAnimating.animate(withGIFData: data, loopCount: 0, preparationBlock: nil, animationBlock: nil)
             animatedImageView.isHidden = false
             return
         }
