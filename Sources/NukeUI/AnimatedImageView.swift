@@ -6,10 +6,11 @@ import Foundation
 
 #if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
 import UIKit
+import Gifu
 
-public final class AnimatedImageView: UIImageView, GIFAnimatable, ImageViewAnimating {
+public final class AnimatedImageView: UIImageView, GIFAnimatable {
     /// A lazy animator.
-    lazy var animator: Animator? = {
+    public lazy var animator: Animator? = {
         return Animator(withDelegate: self)
     }()
 
@@ -24,9 +25,7 @@ public final class AnimatedImageView: UIImageView, GIFAnimatable, ImageViewAnima
     }
 }
 
-public protocol ImageViewAnimating: UIImageView {
-    func animate(withGIFData imageData: Data, loopCount: Int, preparationBlock: (() -> Void)? , animationBlock: (() -> Void)?)
-}
+public typealias ImageViewAnimating = UIImageView & GIFAnimatable
 
 public protocol AnimatedImageViewProviding {
     func makeAnimatedImageView() -> ImageViewAnimating
